@@ -57,6 +57,7 @@ class EventController extends Controller
 
     public function show($id){
 
+    
         $evento = Event::find($id);
 
         if(!$evento){
