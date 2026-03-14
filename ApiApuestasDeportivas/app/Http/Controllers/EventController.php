@@ -14,7 +14,7 @@ class EventController extends Controller
 
         return response()->json([
             'message'=> 'Listado de todos los eventos',
-            'data'=> $eventos
+            'data'=> $evento,
         ]);
     }
 
