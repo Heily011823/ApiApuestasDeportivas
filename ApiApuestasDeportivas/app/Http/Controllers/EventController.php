@@ -130,4 +130,19 @@ class EventController extends Controller
             'message' => "El evento con id ($id) ha sido eliminado correctamente"
         ]);
     }
+
+    public function odds($id){
+        $event = Event::with('odds')->find($id);
+
+        if(!$event){
+            return response()->json([
+                'message' => 'Evento no encontrado'
+            ],404);
+        }
+
+        return response()->json([
+            'event' => $event->equipo_local . " vs " . $event->equipo_visitante,
+            'odds' => $event->odds
+        ]);
+    }
 }

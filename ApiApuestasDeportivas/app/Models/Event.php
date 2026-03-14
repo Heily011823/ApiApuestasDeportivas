@@ -32,4 +32,8 @@ class Event extends Model
     protected $casts = [
         'fecha' => 'datetime',
     ];
+
+    public function odds(){
+        return $this->hasMany(Odd::class);
+    }
 }
