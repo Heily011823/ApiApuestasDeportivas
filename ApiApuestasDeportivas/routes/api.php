@@ -29,25 +29,18 @@ Route::middleware('auth:api')->group(function () {
     // Usuario logueado
     Route::get('me', [AuthController::class, 'me']);
 
-    // Listar eventos
-    Route::get('eventos', [EventController::class, 'index'])
-        ->middleware('role:admin,usuario');
+    Route::middleware(['auth:api','role:admin'])->group(function(){
+        Route::post('/eventos', [EventController::class,'store']);
+        Route::put('/eventos/{id}', [EventController::class,'update']);
+        Route::delete('/eventos/{id}', [EventController::class,'destroy']);
+        Route::get('/eventos', [EventController::class,'index']);
+        Route::get('/eventos/{id}', [EventController::class,'show']);
+    });
 
-    // Ver evento por id
-    Route::get('eventos/{id}', [EventController::class, 'show'])
-        ->middleware('role:admin,usuario');
-
-    // Crear evento
-    Route::post('eventos', [EventController::class, 'store'])
-        ->middleware('role:admin');
-
-    // Actualizar evento
-    Route::put('eventos/{id}', [EventController::class, 'update'])
-        ->middleware('role:admin');
-
-    // Eliminar evento
-    Route::delete('eventos/{id}', [EventController::class, 'destroy'])
-        ->middleware('role:admin');
+    Route::middleware(['auth:api'])->group(function(){
+        Route::get('/eventos', [EventController::class,'index']);
+        Route::get('/eventos/{id}', [EventController::class,'show']);
+    });
         
 });
 

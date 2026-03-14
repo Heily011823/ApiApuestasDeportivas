@@ -24,7 +24,7 @@ class EventController extends Controller
             'deporte' => 'required|string|max:100',
             'equipo_local' => 'required|string|max:100',
             'equipo_visitante' => 'required|string|max:100',
-            'fecha' => 'required|string',
+            'fecha' => 'required|date_format:Y-m-d H:i:s',
             'estado' => 'nullable|string|max:80'
         ], 
         [
@@ -86,7 +86,7 @@ class EventController extends Controller
             'deporte' => 'sometimes|string|max:100',
             'equipo_local' => 'sometimes|string|max:100',
             'equipo_visitante' => 'sometimes|string|max:100',
-            'fecha' => 'sometimes|string',
+            'fecha' => 'required|date_format:Y-m-d H:i:s',
             'estado' => 'sometimes|string|max:80'
         ], [
             'deporte.string' => 'El deporte debe ser una cadena de texto',
