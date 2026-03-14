@@ -107,7 +107,8 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if ($user->otp_code != $request->code) {
+
+        if ($user->otp_code != $request->code){
             return response()->json([
                 'message' => 'Código incorrecto'
             ], 401);
@@ -123,7 +124,9 @@ class AuthController extends Controller
         $token = JWTAuth::fromUser($user);
 
         // Limpiar el código
+        
         $user->otp_code = null;
+        $user->otp_expires_at = null;
         $user->save();
 
         return response()->json([
