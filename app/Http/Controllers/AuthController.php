@@ -67,8 +67,8 @@ class AuthController extends Controller
         $codigo = rand(100000,999999);
 
         // Guardar código y expiración
-        $user->verification_code = $codigo;
-        $user->code_expires_at = Carbon::now()->addMinutes(5);
+        $user->otp_code = $codigo;
+        $user->otp_expires_at = Carbon::now()->addMinutes(5);
         $user->save();
 
         // Enviar correo con el código
@@ -107,13 +107,13 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if ($user->verification_code != $request->code) {
+        if ($user->otp_code != $request->code) {
             return response()->json([
                 'message' => 'Código incorrecto'
             ], 401);
         }
 
-        if (now()->greaterThan($user->code_expires_at)) {
+        if (now()->greaterThan($user->otp_expires_at)) {
             return response()->json([
                 'message' => 'El código ha expirado'
             ], 401);
@@ -123,7 +123,7 @@ class AuthController extends Controller
         $token = JWTAuth::fromUser($user);
 
         // Limpiar el código
-        $user->verification_code = null;
+        $user->otp_code = null;
         $user->save();
 
         return response()->json([
