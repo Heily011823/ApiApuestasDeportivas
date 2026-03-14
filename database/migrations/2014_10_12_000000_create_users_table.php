@@ -13,10 +13,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+
             $table->string('password');
+
+            // Campos del sistema de apuestas
+            $table->decimal('balance', 10, 2)->default(0);
+            $table->string('role')->default('user');
+
+            // Para autenticación OTP
+            $table->string('otp_code')->nullable();
+            $table->timestamp('otp_expires_at')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
