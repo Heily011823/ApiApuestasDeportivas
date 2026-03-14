@@ -17,3 +17,22 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::middleware(['auth:api','role:admin'])->group(function(){
+
+    Route::post('/odds',[OddBaseController::class,'store']);
+    Route::get('/odds',[OddBaseController::class,'index']);
+    Route::get('/odds/{id}',[OddBaseController::class,'show']);
+    Route::put('/odds/{id}',[OddBaseController::class,'update']);
+    Route::delete('/odds/{id}',[OddBaseController::class,'destroy']);
+
+});
+
+Route::middleware('auth:api')->group(function(){
+
+    Route::get('/odds',[OddBaseController::class,'index']);
+    Route::get('/odds/{id}',[OddBaseController::class,'show']);
+
+});
+
