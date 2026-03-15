@@ -34,6 +34,17 @@ class Event extends Model
     ];
 
     public function odds(){
+
         return $this->hasMany(Odd::class);
+    }
+
+    public function bets(){
+
+        return $this->hasMany(Bet::class, 'event_id');
+    }
+
+    public function result(){
+        
+        return $this->hasOne(Result::class, 'event_id');
     }
 }

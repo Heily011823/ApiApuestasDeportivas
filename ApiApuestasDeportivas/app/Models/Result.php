@@ -14,8 +14,13 @@ class Result extends Model
         'outcome',
     ];
 
-    public function event()
-    {
-        return $this->belongsTo(Event::class);
+    public function event(){
+
+        return $this->belongsTo(Event::class, 'event_id');
+    }
+
+    public function bets(){
+        
+        return $this->hasMany(Bet::class, 'event_id');
     }
 }

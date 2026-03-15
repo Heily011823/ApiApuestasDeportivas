@@ -26,6 +26,9 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'role',
+        'balance',   
+        'otp_code',     
+        'otp_expires_at'
     ];
 
     /**
@@ -46,6 +49,10 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function bets(){
+        return $this->hasMany(Bet::class, 'user_id');
+    }
 
     public function getJWTIdentifier(){
         return $this->getKey();

@@ -50,17 +50,18 @@ class ResultController extends Controller
 
                 if($apuesta->tipo_apuesta == $validated['outcome']){
 
-                    $apuesta->estado = 'ganada';
+                    $apuesta->status = 'ganada';
 
-                    $ganancia = $apuesta->monto * $apuesta->cuota;
+                    $apuesta->potential_win = $apuesta->amount * $apuesta->odds;
 
-                    $apuesta->ganancia = $ganancia;
 
                     $usuario = User::find($apuesta->usuario_id);
-                    $usuario->saldo += $ganancia;
-                    $usuario->save();
+                    if ($usuario) {
+                        $usuario->balance += $ganancia;
+                        $usuario->save();
+                    }
 
-                }else{
+                } else{
 
                     $apuesta->estado = 'perdida';
                     $apuesta->ganancia = 0;

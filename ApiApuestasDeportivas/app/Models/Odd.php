@@ -21,8 +21,8 @@ class Odd extends Model
         'odd_value' => 'decimal:2'
     ];
 
-    public function event()
-    {
-        return $this->belongsTo(Event::class);
+    public function event(){
+        
+        return $this->belongsTo(Event::class, 'event_id');
     }
 }
