@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BetController;
 use App\Http\Controllers\OddController;
+use App\Http\Controllers\ResultController;
 
 
 Route::post('/register',[AuthController::class,'register']);
@@ -22,6 +23,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/bets', [BetController::class, 'placeBet']);
 
 });
+
 
 Route::middleware('auth:api')->group(function () {
 
@@ -49,6 +51,13 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/odds/{id}',[OddController::class,'update']);
         Route::delete('/odds/{id}',[OddController::class,'destroy']);
 
+        // Resultados
+        Route::get('/results', [ResultController::class, 'index']);
+        Route::post('/results', [ResultController::class, 'store']);
+        Route::get('/results/{id}', [ResultController::class, 'show']);
+        Route::put('/results/{id}', [ResultController::class, 'update']);
+        Route::delete('/results/{id}', [ResultController::class, 'destroy']);
+
     });
 
     Route::middleware(['auth:api'])->group(function(){
@@ -60,6 +69,12 @@ Route::middleware('auth:api')->group(function () {
         // Cuotas
         Route::get('/odds',[OddController::class,'index']);
         Route::get('/odds/{id}',[OddController::class,'show']);
+
+
+        // Resultados
+        Route::get('/results', [ResultController::class, 'index']);
+        Route::get('/results/{id}', [ResultController::class, 'show']);
+
     });
         
 });
