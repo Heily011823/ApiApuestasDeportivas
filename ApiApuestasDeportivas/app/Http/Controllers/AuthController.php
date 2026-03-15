@@ -76,7 +76,7 @@ class AuthController extends Controller
         Mail::raw("Tu código de verificación es: $codigo", function($message) use ($user){
 
             $message->to($user->email)
-                    ->subject('Código de verificación ApiProductos');
+                    ->subject('Código de verificación Apuestas');
 
         });
 
@@ -86,7 +86,7 @@ class AuthController extends Controller
     }
 
 
-    public function verifyCode(Request $request)
+    public function verifyOtp(Request $request)
     {
 
         $validador = Validator::make($request->all(), [

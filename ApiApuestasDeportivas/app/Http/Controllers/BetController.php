@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Bet;
-use App\Notifications\BetPlacedNotification;
 use App\Models\Event;
 use App\Models\Odd;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\BetPlacedNotification;
 
 class BetController extends Controller
 {
+
     public function placeBet(Request $request)
     {
         $user = auth()->user();
 
-         if (!$user) {
+        if (!$user) {
             return response()->json([
                 'message' => 'Usuario no autenticado'
             ], 401);
@@ -28,58 +29,72 @@ class BetController extends Controller
         ]);
 
         $event = Event::findOrFail($request->event_id);
-        
-        $amount = $request->amount;
-        
-          $odd = Odd::where('event_id', $event->id)
-                  ->where('bet_type', $request->tipo_apuesta)
-                  ->first();
-
 
         if ($event->estado !== 'programado') {
             return response()->json([
-                'message' => 'No se puede apostar en un evento finalizado.'
+                'message' => 'No se puede apostar en un evento finalizado'
             ], 400);
         }
 
         $odd = Odd::where('event_id', $event->id)
-                  ->where('bet_type', $request->tipo_apuesta)
-                  ->first();
+                    ->where('bet_type', $request->tipo_apuesta)
+                    ->first();
 
         if (!$odd) {
-            return response()->json(['message' => 'Tipo de apuesta inválido.'], 400);
+            return response()->json([
+                'message' => 'Tipo de apuesta inválido'
+            ], 400);
+        }
+
+        $amount = $request->amount;
+
+        if ($user->saldo < $amount) {
+            return response()->json([
+                'message' => 'Saldo insuficiente'
+            ], 400);
         }
 
         $potentialWin = $amount * $odd->odd_value;
 
-        $bet = DB::transaction(function() use ($user, $request, $odd, $potentialWin, $event) {
+        $bet = DB::transaction(function () use ($user, $event, $request, $odd, $amount, $potentialWin) {
+
+            // descontar saldo
+            $user->saldo = $user->saldo - $amount;
+            $user->save();
+
+            // crear apuesta
             return Bet::create([
                 'user_id' => $user->id,
                 'event_id' => $event->id,
                 'tipo_apuesta' => $request->tipo_apuesta,
-                'amount' => $request->amount,
+                'amount' => $amount,
                 'odds' => $odd->odd_value,
                 'potential_win' => $potentialWin,
                 'status' => 'pending'
             ]);
+
         });
 
-        // enviar notificación
+        // notificación
         $user->notify(new BetPlacedNotification($amount, $potentialWin));
 
         return response()->json([
-            "message" => "Apuesta registrada",
-            "bet" => $bet
+            'message' => 'Apuesta registrada correctamente',
+            'bet' => $bet
         ]);
     }
 
-    public function myBets(){
+
+    public function myBets()
+    {
         $user = auth()->user();
-        $bets = $user->bets; // Si definiste relación 'bets' en User
+
+        $bets = Bet::where('user_id', $user->id)->get();
 
         return response()->json([
             'message' => 'Listado de tus apuestas',
             'data' => $bets
         ]);
     }
+
 }

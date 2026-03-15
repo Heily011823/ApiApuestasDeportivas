@@ -11,31 +11,22 @@ use Illuminate\Support\Facades\DB;
 class ResultController extends Controller
 {
 
-    public function index(){
-
+    public function index()
+    {
         $resultados = Result::all();
 
         return response()->json([
             'message'=> 'Listado de todos los resultados',
-            'data'=> $resultados,
+            'data'=> $resultados
         ]);
     }
 
 
-    public function store(Request $request){
-
-        $validated = $request->validate(
-        [
-            'event_id' => 'required|integer',
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'event_id' => 'required|exists:eventos,id',
             'outcome' => 'required|string|max:100'
-        ], 
-        [
-            'event_id.required' => 'El id del evento es obligatorio',
-            'event_id.integer' => 'El id del evento debe ser un número',
-
-            'outcome.required' => 'El resultado es obligatorio',
-            'outcome.string' => 'El resultado debe ser una cadena de texto',
-            'outcome.max' => 'El resultado no puede tener más de 100 caracteres'
         ]);
 
         DB::beginTransaction();
@@ -52,19 +43,21 @@ class ResultController extends Controller
 
                     $apuesta->status = 'ganada';
 
-                    $apuesta->potential_win = $apuesta->amount * $apuesta->odds;
+                    $ganancia = $apuesta->amount * $apuesta->odds;
 
+                    $apuesta->potential_win = $ganancia;
 
-                    $usuario = User::find($apuesta->usuario_id);
-                    if ($usuario) {
-                        $usuario->balance += $ganancia;
+                    $usuario = User::find($apuesta->user_id);
+
+                    if($usuario){
+                        $usuario->saldo += $ganancia;
                         $usuario->save();
                     }
 
                 } else{
 
-                    $apuesta->estado = 'perdida';
-                    $apuesta->ganancia = 0;
+                    $apuesta->status = 'perdida';
+                    $apuesta->potential_win = 0;
 
                 }
 
@@ -74,82 +67,78 @@ class ResultController extends Controller
             DB::commit();
 
             return response()->json([
-                'message' => 'El resultado ha sido registrado correctamente y las apuestas fueron procesadas',
-                'data'=> $resultado,
-            ], 201);
+                'message' => 'Resultado registrado y apuestas procesadas',
+                'data'=> $resultado
+            ],201);
 
         } catch (\Exception $e) {
 
             DB::rollBack();
 
             return response()->json([
-                'message' => 'Ocurrió un error al registrar el resultado',
+                'message' => 'Error al registrar el resultado',
                 'error' => $e->getMessage()
             ],500);
         }
     }
 
 
-    public function show($id){
-
+    public function show($id)
+    {
         $resultado = Result::find($id);
 
         if(!$resultado){
             return response()->json([
-                'message' => "No se encontro el resultado buscado con id ($id)"
+                'message' => "No se encontró el resultado con id ($id)"
             ],404);
         }
 
         return response()->json([
-            'message' => "El resultado ha sido encontrado con id ($id)",
+            'message' => 'Resultado encontrado',
             'data'=> $resultado
         ]);
     }
 
-    public function update(Request $request, string $id){
 
+    public function update(Request $request, $id)
+    {
         $resultado = Result::find($id);
 
         if(!$resultado){
             return response()->json([
-                'message' => "No se encontro el resultado buscado con id ($id)"
+                'message' => "No se encontró el resultado con id ($id)"
             ],404);
         }
 
-        $validated = $request->validate(
-        [
-            'event_id' => 'sometimes|integer',
+        $validated = $request->validate([
+            'event_id' => 'sometimes|exists:eventos,id',
             'outcome' => 'sometimes|string|max:100'
-        ],
-        [
-            'event_id.integer' => 'El id del evento debe ser un número',
-
-            'outcome.string' => 'El resultado debe ser una cadena de texto',
-            'outcome.max' => 'El resultado no puede tener más de 100 caracteres'
         ]);
 
         $resultado->update($validated);
 
         return response()->json([
-            'message' => "El resultado con id ($id) ha sido actualizado correctamente",
+            'message' => 'Resultado actualizado correctamente',
             'data'=> $resultado
         ]);
     }
 
-    public function destroy(string $id){
 
+    public function destroy($id)
+    {
         $resultado = Result::find($id);
 
         if(!$resultado){
             return response()->json([
-                'message' => "No se encontro el resultado buscado con id ($id)"
+                'message' => "No se encontró el resultado con id ($id)"
             ],404);
         }
 
         $resultado->delete();
 
         return response()->json([
-            'message' => "El resultado con id ($id) ha sido eliminado correctamente"
+            'message' => 'Resultado eliminado correctamente'
         ]);
     }
+
 }

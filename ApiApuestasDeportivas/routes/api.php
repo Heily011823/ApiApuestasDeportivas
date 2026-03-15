@@ -12,7 +12,7 @@ use App\Http\Controllers\UserController;
 
 Route::post('/register', [AuthController::class,'register']);
 Route::post('/login', [AuthController::class,'login']);
-Route::post('/verify-code', [AuthController::class,'verifyCode']);
+Route::post('/verify-otp', [AuthController::class,'verifyOtp']);
 
 
 Route::middleware('auth:api')->group(function () {

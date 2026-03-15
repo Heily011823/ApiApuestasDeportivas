@@ -7,6 +7,7 @@ use App\Models\User;
 
 class UserController extends Controller
 {
+
     // Ajustar balance de un usuario
     public function adjustBalance(Request $request, $id)
     {
@@ -18,18 +19,14 @@ class UserController extends Controller
             ], 404);
         }
 
-        $validated = $request->validate(
-            [
-                'balance' => 'required|numeric|min:0'
-            ],
-            [
-                'balance.required' => 'El saldo es obligatorio',
-                'balance.numeric' => 'El saldo debe ser un número',
-                'balance.min' => 'El saldo no puede ser negativo'
-            ]
-        );
+        $validated = $request->validate([
+            'balance' => 'required|numeric|min:0'
+        ],[
+            'balance.required' => 'El saldo es obligatorio',
+            'balance.numeric' => 'El saldo debe ser un número',
+            'balance.min' => 'El saldo no puede ser negativo'
+        ]);
 
-        // Actualizar balance
         $user->balance = $validated['balance'];
         $user->save();
 
@@ -38,6 +35,7 @@ class UserController extends Controller
             'data' => $user
         ]);
     }
+
 
     // Consultar balance del usuario autenticado
     public function getBalance()
@@ -55,4 +53,5 @@ class UserController extends Controller
             'balance' => $user->balance
         ]);
     }
+
 }
