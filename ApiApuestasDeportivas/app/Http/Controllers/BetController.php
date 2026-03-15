@@ -27,13 +27,14 @@ class BetController extends Controller
             'amount' => 'required|numeric|min:1'
         ]);
 
+        $event = Event::findOrFail($request->event_id);
+        
         $amount = $request->amount;
         
           $odd = Odd::where('event_id', $event->id)
                   ->where('bet_type', $request->tipo_apuesta)
                   ->first();
 
-        $event = Event::findOrFail($request->event_id);
 
         if ($event->estado !== 'programado') {
             return response()->json([
