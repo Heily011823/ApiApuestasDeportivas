@@ -4,13 +4,12 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class Handler extends ExceptionHandler
 {
     /**
      * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<\Throwable>, \Psr\Log\LogLevel::*>
      */
     protected $levels = [
         //
@@ -18,17 +17,13 @@ class Handler extends ExceptionHandler
 
     /**
      * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<\Throwable>>
      */
     protected $dontReport = [
         //
     ];
 
     /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
+     * Inputs que nunca se muestran en errores de validación.
      */
     protected $dontFlash = [
         'current_password',
@@ -37,10 +32,17 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
+     * Registrar manejo de excepciones
      */
     public function register(): void
     {
+
+        $this->renderable(function (TokenExpiredException $e, $request) {
+            return response()->json([
+                'message' => 'Tu token ha expirado'
+            ], 401);
+        });
+
         $this->reportable(function (Throwable $e) {
             //
         });
