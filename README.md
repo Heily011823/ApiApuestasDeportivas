@@ -15,6 +15,7 @@ Permite registrar usuarios, iniciar sesión, consultar eventos deportivos, ver c
 
 * Registro de usuarios
 * Inicio de sesión con JWT
+* Autenticación de doble factor (2FA)
 * Ver eventos deportivos
 * Ver cuotas de apuestas
 * Realizar apuestas
@@ -96,4 +97,4 @@ Heily Yohana Rios Ayala
 Maria Paz Puerta Acevedo
 
 Universidad Autónoma de Manizales
-Asignatura: Backend
+Asignatura: Programación Backend
