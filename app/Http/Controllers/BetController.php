@@ -11,7 +11,6 @@ use App\Notifications\BetPlacedNotification;
 
 class BetController extends Controller
 {
-
     public function placeBet(Request $request)
     {
         $user = auth()->user();
@@ -48,7 +47,8 @@ class BetController extends Controller
 
         $amount = $request->amount;
 
-        if ($user->saldo < $amount) {
+       
+        if ($user->balance < $amount) {
             return response()->json([
                 'message' => 'Saldo insuficiente'
             ], 400);
@@ -58,8 +58,8 @@ class BetController extends Controller
 
         $bet = DB::transaction(function () use ($user, $event, $request, $odd, $amount, $potentialWin) {
 
-            // descontar saldo
-            $user->saldo = $user->saldo - $amount;
+            // descontar balance
+            $user->balance = $user->balance - $amount;
             $user->save();
 
             // crear apuesta
@@ -84,7 +84,6 @@ class BetController extends Controller
         ]);
     }
 
-
     public function myBets()
     {
         $user = auth()->user();
@@ -96,5 +95,4 @@ class BetController extends Controller
             'data' => $bets
         ]);
     }
-
 }
