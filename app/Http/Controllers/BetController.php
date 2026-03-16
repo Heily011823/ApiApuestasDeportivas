@@ -95,4 +95,18 @@ class BetController extends Controller
             'data' => $bets
         ]);
     }
+    public function show($id)
+    {
+        $bet = \App\Models\Bet::find($id);
+
+        if (!$bet) {
+            return response()->json([
+                'message' => 'Apuesta no encontrada'
+            ], 404);
+        }
+
+        return response()->json([
+            'bet' => $bet
+        ], 200);
+    }
 }

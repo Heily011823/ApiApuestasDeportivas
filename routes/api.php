@@ -9,11 +9,10 @@ use App\Http\Controllers\OddController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\UserController;
 
-
+// Autenticación
 Route::post('/register', [AuthController::class,'register']);
 Route::post('/login', [AuthController::class,'login']);
 Route::post('/verify-otp', [AuthController::class,'verifyOtp']);
-
 
 Route::middleware('auth:api')->group(function () {
 
@@ -37,8 +36,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/my-balance', [UserController::class, 'getBalance']); 
     Route::get('/my-bets', [BetController::class, 'myBets']);
 
-    // Apostar
+    // Apuestas
     Route::post('/bets', [BetController::class, 'placeBet']);
+    Route::get('/bets/{id}', [BetController::class, 'show']);
 
     // Admin
     Route::middleware('role:admin')->group(function() {
@@ -63,4 +63,3 @@ Route::middleware('auth:api')->group(function () {
     });
 
 });
-
